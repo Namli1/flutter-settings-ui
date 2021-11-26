@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_ui/src/cupertino_settings_item.dart';
+import 'package:settings_ui/src/settings_tile_theme.dart';
 
 import 'defines.dart';
 
@@ -33,6 +34,9 @@ class SettingsTile extends AbstractTile {
   final TargetPlatform? platform;
   final bool? visible;
 
+  /// iOS only supports iconColor, textColor & tileColor
+  final SettingsTileTheme? theme;
+
   const SettingsTile({
     Key? key,
     this.title,
@@ -53,6 +57,7 @@ class SettingsTile extends AbstractTile {
     this.switchActiveColor,
     this.platform,
     this.visible,
+    this.theme,
   })  : _tileType = _SettingsTileType.simple,
         onToggle = null,
         switchValue = null,
@@ -60,25 +65,26 @@ class SettingsTile extends AbstractTile {
         assert(subtitleMaxLines == null || subtitleMaxLines > 0),
         super(key: key);
 
-  const SettingsTile.switchTile(
-      {Key? key,
-      this.title,
-      this.titleWidget,
-      this.titleMaxLines,
-      this.subtitle,
-      this.subtitleMaxLines,
-      this.leading,
-      this.enabled = true,
-      this.trailing,
-      this.subtitleWidget,
-      required this.onToggle,
-      required this.switchValue,
-      this.titleTextStyle,
-      this.subtitleTextStyle,
-      this.switchActiveColor,
-      this.platform,
-      this.visible})
-      : _tileType = _SettingsTileType.switchTile,
+  const SettingsTile.switchTile({
+    Key? key,
+    this.title,
+    this.titleWidget,
+    this.titleMaxLines,
+    this.subtitle,
+    this.subtitleMaxLines,
+    this.leading,
+    this.enabled = true,
+    this.trailing,
+    this.subtitleWidget,
+    required this.onToggle,
+    required this.switchValue,
+    this.titleTextStyle,
+    this.subtitleTextStyle,
+    this.switchActiveColor,
+    this.platform,
+    this.visible,
+    this.theme,
+  })  : _tileType = _SettingsTileType.switchTile,
         onTap = null,
         onPressed = null,
         iosChevron = null,
@@ -130,6 +136,7 @@ class SettingsTile extends AbstractTile {
         subtitleTextStyle: subtitleTextStyle,
         valueTextStyle: subtitleTextStyle,
         trailing: trailing,
+        listTileTheme: theme,
       );
     } else {
       return CupertinoSettingsItem(
@@ -150,50 +157,81 @@ class SettingsTile extends AbstractTile {
         labelTextStyle: titleTextStyle,
         subtitleTextStyle: subtitleTextStyle,
         valueTextStyle: subtitleTextStyle,
+        listTileTheme: theme,
       );
     }
   }
 
   Widget androidTile(BuildContext context) {
     if (_tileType == _SettingsTileType.switchTile) {
-      return SwitchListTile(
-        secondary: leading,
-        value: switchValue!,
-        activeColor: switchActiveColor,
-        onChanged: enabled ? onToggle : null,
-        title: titleWidget ??
-            Text(
-              title ?? '',
-              style: titleTextStyle,
-              maxLines: titleMaxLines,
-              overflow: TextOverflow.ellipsis,
-            ),
-        subtitle: subtitleWidget ??
-            (subtitle != null
-                ? Text(
-                    subtitle!,
-                    style: subtitleTextStyle,
-                    maxLines: subtitleMaxLines,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                : null),
+      return ListTileTheme.merge(
+        dense: theme?.dense,
+        shape: theme?.shape,
+        style: theme?.style,
+        selectedColor: theme?.selectedColor,
+        iconColor: theme?.iconColor,
+        textColor: theme?.textColor,
+        contentPadding: theme?.contentPadding,
+        tileColor: theme?.tileColor,
+        selectedTileColor: theme?.selectedTileColor,
+        enableFeedback: theme?.enableFeedback,
+        horizontalTitleGap: theme?.horizontalTitleGap,
+        minVerticalPadding: theme?.minVerticalPadding,
+        minLeadingWidth: theme?.minLeadingWidth,
+        child: SwitchListTile(
+          secondary: leading,
+          value: switchValue!,
+          activeColor: switchActiveColor,
+          onChanged: enabled ? onToggle : null,
+          title: titleWidget ??
+              Text(
+                title ?? '',
+                style: titleTextStyle,
+                maxLines: titleMaxLines,
+                overflow: TextOverflow.ellipsis,
+              ),
+          subtitle: subtitleWidget ??
+              (subtitle != null
+                  ? Text(
+                      subtitle!,
+                      style: subtitleTextStyle,
+                      maxLines: subtitleMaxLines,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : null),
+        ),
       );
     } else {
-      return ListTile(
-        title: titleWidget ?? Text(title ?? '', style: titleTextStyle),
-        subtitle: subtitleWidget ??
-            (subtitle != null
-                ? Text(
-                    subtitle!,
-                    style: subtitleTextStyle,
-                    maxLines: subtitleMaxLines,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                : null),
-        leading: leading,
-        enabled: enabled,
-        trailing: trailing,
-        onTap: onTapFunction(context) as void Function()?,
+      return ListTileTheme.merge(
+        dense: theme?.dense,
+        shape: theme?.shape,
+        style: theme?.style,
+        selectedColor: theme?.selectedColor,
+        iconColor: theme?.iconColor,
+        textColor: theme?.textColor,
+        contentPadding: theme?.contentPadding,
+        tileColor: theme?.tileColor,
+        selectedTileColor: theme?.selectedTileColor,
+        enableFeedback: theme?.enableFeedback,
+        horizontalTitleGap: theme?.horizontalTitleGap,
+        minVerticalPadding: theme?.minVerticalPadding,
+        minLeadingWidth: theme?.minLeadingWidth,
+        child: ListTile(
+          title: titleWidget ?? Text(title ?? '', style: titleTextStyle),
+          subtitle: subtitleWidget ??
+              (subtitle != null
+                  ? Text(
+                      subtitle!,
+                      style: subtitleTextStyle,
+                      maxLines: subtitleMaxLines,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : null),
+          leading: leading,
+          enabled: enabled,
+          trailing: trailing,
+          onTap: onTapFunction(context) as void Function()?,
+        ),
       );
     }
   }
@@ -211,11 +249,15 @@ class SettingsTile extends AbstractTile {
 
 class CustomTile extends AbstractTile {
   final Widget child;
-
-  CustomTile({
+  const CustomTile({
+    Key? key,
     required this.child,
+<<<<<<< HEAD
   });
 
+=======
+  }) : super(key: key);
+>>>>>>> 7b69b9dbbc62b5abe399352c3f80877df9e0f97f
   @override
   Widget build(BuildContext context) {
     return child;
