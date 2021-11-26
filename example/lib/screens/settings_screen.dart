@@ -111,18 +111,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SettingsSection(
           title: 'Misc',
-<<<<<<< HEAD
-          tiles: [
-            SettingsTile(title: 'Terms of Service', leading: Icon(Icons.description)),
-            SettingsTile(title: 'Open source licenses', leading: Icon(Icons.collections_bookmark)),
-=======
           tiles: const [
             SettingsTile(
                 title: 'Terms of Service', leading: Icon(Icons.description)),
             SettingsTile(
                 title: 'Open source licenses',
                 leading: Icon(Icons.collections_bookmark)),
->>>>>>> 7b69b9dbbc62b5abe399352c3f80877df9e0f97f
           ],
         ),
         CustomSection(

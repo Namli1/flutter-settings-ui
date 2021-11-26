@@ -13,33 +13,38 @@ enum SettingsItemType {
 typedef PressOperationCallback = void Function();
 
 class CupertinoSettingsItem extends StatefulWidget {
-  const CupertinoSettingsItem(
-      {Key? key,
-        required this.type,
-      this.label,
-      this.labelWidget,
-      this.labelMaxLines,
-      this.subtitle,
-      this.subtitleWidget,
-      this.subtitleMaxLines,
-      this.leading,
-      this.trailing,
-      this.iosChevron = defaultCupertinoForwardIcon,
-      this.iosChevronPadding = defaultCupertinoForwardPadding,
-      this.value,
-      this.valueWidget,
-      this.hasDetails = false,
-      this.enabled = true,
-      this.onPress,
-      this.switchValue = false,
-      this.onToggle,
-      this.labelTextStyle,
-      this.subtitleTextStyle,
-      this.valueTextStyle,
-      this.switchActiveColor,
-      this.listTileTheme})
-      : assert(labelMaxLines == null || labelMaxLines > 0),
+  const CupertinoSettingsItem({
+    Key? key,
+    required this.type,
+    this.label,
+    this.labelWidget,
+    this.labelMaxLines,
+    this.subtitle,
+    this.subtitleWidget,
+    this.subtitleMaxLines,
+    this.leading,
+    this.trailing,
+    this.iosChevron = defaultCupertinoForwardIcon,
+    this.iosChevronPadding = defaultCupertinoForwardPadding,
+    this.value,
+    this.valueWidget,
+    this.hasDetails = false,
+    this.enabled = true,
+    this.onPress,
+    this.switchValue = false,
+    this.onToggle,
+    this.labelTextStyle,
+    this.subtitleTextStyle,
+    this.valueTextStyle,
+    this.switchActiveColor,
+    this.listTileTheme,
+    this.borderRadius,
+    this.setHeight,
+    this.height,
+  })  : assert(labelMaxLines == null || labelMaxLines > 0),
         assert(subtitleMaxLines == null || subtitleMaxLines > 0),
+        assert(!(height != null && setHeight != null && setHeight == true),
+            "Cannot set both a custom height and use the predefined height (i.e. setHeight = true)"),
         super(key: key);
 
   final String? label;
@@ -65,6 +70,14 @@ class CupertinoSettingsItem extends StatefulWidget {
   final TextStyle? valueTextStyle;
   final Color? switchActiveColor;
   final SettingsTileTheme? listTileTheme;
+  final BorderRadiusGeometry? borderRadius;
+
+  ///Wether or not to set a height for the tile (so you could use dynamic height based on children),
+  ///defaults t0 [true]
+  final bool? setHeight;
+
+  ///Height of the tile
+  final double? height;
 
   @override
   State<StatefulWidget> createState() => CupertinoSettingsItemState();
@@ -180,24 +193,23 @@ class CupertinoSettingsItemState extends State<CupertinoSettingsItem> {
 
     switch (widget.type) {
       case SettingsItemType.toggle:
-        rowChildren
-          .add(
-            Padding(
-              padding: const EdgeInsetsDirectional.only(end: 11.0),
-              child: CupertinoSwitch(
-                value: widget.switchValue!,
-                activeColor: widget.enabled
-                    ? (widget.switchActiveColor ??
-                        Theme.of(context).accentColor)
-                    : CupertinoColors.inactiveGray,
-                onChanged: !widget.enabled
-                    ? null
-                    : (bool value) {
-                        widget.onToggle!(value);
-                      },
-              ),
+        rowChildren.add(
+          Padding(
+            padding: const EdgeInsetsDirectional.only(end: 11.0),
+            child: CupertinoSwitch(
+              value: widget.switchValue!,
+              activeColor: widget.enabled
+                  ? (widget.switchActiveColor ??
+                      Theme.of(context).colorScheme.secondary)
+                  : CupertinoColors.inactiveGray,
+              onChanged: !widget.enabled
+                  ? null
+                  : (bool value) {
+                      widget.onToggle!(value);
+                    },
             ),
-          );
+          ),
+        );
         break;
 
       case SettingsItemType.modal:
@@ -318,13 +330,21 @@ class CupertinoSettingsItemState extends State<CupertinoSettingsItem> {
       },
       child: Container(
         decoration: BoxDecoration(
-          borderRadius:
-              isLargeScreen ? const BorderRadius.all(Radius.circular(20)) : null,
+          borderRadius: isLargeScreen
+              ? (widget.borderRadius ??
+                  const BorderRadius.all(Radius.circular(20)))
+              : null,
           color: tileTheme.tileColor ?? calculateBackgroundColor(context),
         ),
-        height: widget.subtitle == null && widget.subtitleWidget == null
-            ? 44.0
-            : 57.0,
+        height:
+            //Set to given height, if non-null
+            widget.height ??
+                //If we should set height, we use the predefined height, otherwise return null
+                ((widget.setHeight ?? true)
+                    ? (widget.subtitle == null && widget.subtitleWidget == null
+                        ? 44.0
+                        : 57.0)
+                    : null),
         child: Row(
           children: rowChildren,
         ),

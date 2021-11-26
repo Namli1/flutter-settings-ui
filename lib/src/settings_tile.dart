@@ -37,6 +37,17 @@ class SettingsTile extends AbstractTile {
   /// iOS only supports iconColor, textColor & tileColor
   final SettingsTileTheme? theme;
 
+  ///The border radius for the iOS tiles on large screens
+  final BorderRadiusGeometry? iosBorderRadius;
+
+  ///Wether or not to set a height for the tile (so you could use dynamic height based on children),
+  ///defaults to [true]
+  ///Only works on ios, on android dynamic height works without this parameter
+  final bool? iosSetHeight;
+
+  ///Height of the tile
+  final double? height;
+
   const SettingsTile({
     Key? key,
     this.title,
@@ -58,6 +69,9 @@ class SettingsTile extends AbstractTile {
     this.platform,
     this.visible,
     this.theme,
+    this.iosBorderRadius,
+    this.height,
+    this.iosSetHeight,
   })  : _tileType = _SettingsTileType.simple,
         onToggle = null,
         switchValue = null,
@@ -84,6 +98,9 @@ class SettingsTile extends AbstractTile {
     this.platform,
     this.visible,
     this.theme,
+    this.iosBorderRadius,
+    this.height,
+    this.iosSetHeight,
   })  : _tileType = _SettingsTileType.switchTile,
         onTap = null,
         onPressed = null,
@@ -137,6 +154,9 @@ class SettingsTile extends AbstractTile {
         valueTextStyle: subtitleTextStyle,
         trailing: trailing,
         listTileTheme: theme,
+        borderRadius: iosBorderRadius,
+        setHeight: iosSetHeight,
+        height: height,
       );
     } else {
       return CupertinoSettingsItem(
@@ -158,6 +178,9 @@ class SettingsTile extends AbstractTile {
         subtitleTextStyle: subtitleTextStyle,
         valueTextStyle: subtitleTextStyle,
         listTileTheme: theme,
+        borderRadius: iosBorderRadius,
+        setHeight: iosSetHeight,
+        height: height,
       );
     }
   }
@@ -216,35 +239,39 @@ class SettingsTile extends AbstractTile {
         horizontalTitleGap: theme?.horizontalTitleGap,
         minVerticalPadding: theme?.minVerticalPadding,
         minLeadingWidth: theme?.minLeadingWidth,
-        child: ListTile(
-          title: titleWidget ?? Text(title ?? '', style: titleTextStyle),
-          subtitle: subtitleWidget ??
-              (subtitle != null
-                  ? Text(
-                      subtitle!,
-                      style: subtitleTextStyle,
-                      maxLines: subtitleMaxLines,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  : null),
-          leading: leading,
-          enabled: enabled,
-          trailing: trailing,
-          onTap: onTapFunction(context) as void Function()?,
+        child: SizedBox(
+          height: height,
+          child: ListTile(
+            title: titleWidget ?? Text(title ?? '', style: titleTextStyle),
+            subtitle: subtitleWidget ??
+                (subtitle != null
+                    ? Text(
+                        subtitle!,
+                        style: subtitleTextStyle,
+                        maxLines: subtitleMaxLines,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : null),
+            leading: leading,
+            enabled: enabled,
+            trailing: trailing,
+            onTap: onTapFunction(context) as void Function()?,
+          ),
         ),
       );
     }
   }
 
-  Function? onTapFunction(BuildContext context) => onTap != null || onPressed != null
-      ? () {
-          if (onPressed != null) {
-            onPressed!.call(context);
-          } else {
-            onTap!.call();
-          }
-        }
-      : null;
+  Function? onTapFunction(BuildContext context) =>
+      onTap != null || onPressed != null
+          ? () {
+              if (onPressed != null) {
+                onPressed!.call(context);
+              } else {
+                onTap!.call();
+              }
+            }
+          : null;
 }
 
 class CustomTile extends AbstractTile {
@@ -252,12 +279,7 @@ class CustomTile extends AbstractTile {
   const CustomTile({
     Key? key,
     required this.child,
-<<<<<<< HEAD
-  });
-
-=======
   }) : super(key: key);
->>>>>>> 7b69b9dbbc62b5abe399352c3f80877df9e0f97f
   @override
   Widget build(BuildContext context) {
     return child;
