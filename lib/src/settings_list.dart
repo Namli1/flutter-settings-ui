@@ -10,6 +10,8 @@ class SettingsList extends StatelessWidget {
   final Color? lightBackgroundColor;
   final Color? darkBackgroundColor;
   final EdgeInsetsGeometry? contentPadding;
+  final BoxConstraints? constraints;
+  final AlignmentGeometry? alignment;
 
   const SettingsList({
     Key? key,
@@ -20,6 +22,8 @@ class SettingsList extends StatelessWidget {
     this.lightBackgroundColor,
     this.darkBackgroundColor,
     this.contentPadding,
+    this.constraints,
+    this.alignment,
   }) : super(key: key);
 
   @override
@@ -29,27 +33,34 @@ class SettingsList extends StatelessWidget {
         color: Theme.of(context).brightness == Brightness.light
             ? backgroundColor ?? lightBackgroundColor ?? backgroundGray
             : backgroundColor ?? darkBackgroundColor ?? Colors.black,
-        child: ListView.builder(
-          physics: physics,
-          shrinkWrap: shrinkWrap,
-          padding: contentPadding,
-          itemCount: sections!.length,
-          itemBuilder: (context, index) {
-            AbstractSection current = sections![index];
-            AbstractSection? futureOne;
-            if (index + 1 != sections!.length) {
-              futureOne = sections![index + 1];
-            }
+        child: Align(
+          alignment: alignment ?? Alignment.center,
+          child: Container(
+            constraints: constraints,
+            child: ListView.builder(
+              physics: physics,
+              primary: false,
+              shrinkWrap: true, //shrinkWrap,
+              padding: contentPadding,
+              itemCount: sections!.length,
+              itemBuilder: (context, index) {
+                AbstractSection current = sections![index];
+                AbstractSection? futureOne;
+                if (index + 1 != sections!.length) {
+                  futureOne = sections![index + 1];
+                }
 
-            // Add divider if title is null
-            if (futureOne != null && futureOne.title != null) {
-              current.showBottomDivider = false;
-              return current;
-            } else {
-              current.showBottomDivider = true;
-              return current;
-            }
-          },
+                // Add divider if title is null
+                if (futureOne != null && futureOne.title != null) {
+                  current.showBottomDivider = false;
+                  return current;
+                } else {
+                  current.showBottomDivider = true;
+                  return current;
+                }
+              },
+            ),
+          ),
         ),
       ),
     );
