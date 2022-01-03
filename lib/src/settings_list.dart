@@ -34,7 +34,7 @@ class SettingsList extends StatelessWidget {
             ? backgroundColor ?? lightBackgroundColor ?? backgroundGray
             : backgroundColor ?? darkBackgroundColor ?? Colors.black,
         child: Align(
-          alignment: alignment ?? Alignment.center,
+          alignment: alignment ?? Alignment.topCenter,
           child: Container(
             constraints: constraints,
             child: ListView.builder(

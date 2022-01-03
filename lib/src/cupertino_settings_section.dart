@@ -8,10 +8,11 @@ import 'defines.dart';
 class CupertinoSettingsSection extends StatelessWidget {
   const CupertinoSettingsSection(
     this.items, {
-      Key? key,
+    Key? key,
     this.header,
     this.headerPadding = defaultTitlePadding,
     this.footer,
+    this.padding,
   }) : super(key: key);
 
   final List<Widget> items;
@@ -19,6 +20,7 @@ class CupertinoSettingsSection extends StatelessWidget {
   final Widget? header;
   final EdgeInsetsGeometry headerPadding;
   final Widget? footer;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -115,12 +117,13 @@ class CupertinoSettingsSection extends StatelessWidget {
     }
 
     return Padding(
-      padding: largeScreen
-          ? EdgeInsets.only(
-              top: header == null ? 35.0 : 22.0, left: 22, right: 22)
-          : EdgeInsets.only(
-              top: header == null ? 35.0 : 22.0,
-            ),
+      padding: padding ??
+          (largeScreen
+              ? EdgeInsets.only(
+                  top: header == null ? 35.0 : 22.0, left: 22, right: 22)
+              : EdgeInsets.only(
+                  top: header == null ? 35.0 : 22.0,
+                )),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: columnChildren,

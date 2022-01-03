@@ -15,20 +15,22 @@ class SettingsSection extends AbstractSection {
   final EdgeInsetsGeometry subtitlePadding;
   final TargetPlatform? platform;
   final bool? visible;
+  final EdgeInsetsGeometry? padding;
 
-  SettingsSection(
-      {Key? key,
-      String? title,
-      Widget? titleWidget,
-      EdgeInsetsGeometry titlePadding = defaultTitlePadding,
-      this.maxLines,
-      this.subtitle,
-      this.subtitlePadding = defaultTitlePadding,
-      this.tiles,
-      this.titleTextStyle,
-      this.platform,
-      this.visible})
-      : assert(maxLines == null || maxLines > 0),
+  SettingsSection({
+    Key? key,
+    String? title,
+    Widget? titleWidget,
+    EdgeInsetsGeometry titlePadding = defaultTitlePadding,
+    this.maxLines,
+    this.subtitle,
+    this.subtitlePadding = defaultTitlePadding,
+    this.tiles,
+    this.titleTextStyle,
+    this.platform,
+    this.visible,
+    this.padding,
+  })  : assert(maxLines == null || maxLines > 0),
         super(
           key: key,
           title: title,
@@ -61,6 +63,7 @@ class SettingsSection extends AbstractSection {
   Widget iosSection() {
     return CupertinoSettingsSection(
       tiles!,
+      padding: padding,
       header: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -94,7 +97,7 @@ class SettingsSection extends AbstractSection {
             title!,
             style: titleTextStyle ??
                 TextStyle(
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontWeight: FontWeight.bold,
                 ),
             maxLines: maxLines,
@@ -109,6 +112,7 @@ class SettingsSection extends AbstractSection {
       ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
+        padding: padding,
         itemCount: tiles!.length,
         separatorBuilder: (BuildContext context, int index) =>
             const Divider(height: 1),

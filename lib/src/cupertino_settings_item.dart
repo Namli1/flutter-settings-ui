@@ -95,24 +95,32 @@ class CupertinoSettingsItemState extends State<CupertinoSettingsItem> {
     final isLargeScreen = MediaQuery.of(context).size.width >= 768;
 
     final ThemeData theme = Theme.of(context);
-    final ListTileTheme? listTileThemes = ListTileTheme(
-      dense: widget.listTileTheme?.dense ?? ListTileTheme.of(context).dense,
-      shape: widget.listTileTheme?.shape,
-      style: widget.listTileTheme?.style ?? ListTileTheme.of(context).style,
-      selectedColor: widget.listTileTheme?.selectedColor,
-      iconColor: widget.listTileTheme?.iconColor,
-      textColor: widget.listTileTheme?.textColor,
-      contentPadding: widget.listTileTheme?.contentPadding,
-      tileColor: widget.listTileTheme?.tileColor,
-      selectedTileColor: widget.listTileTheme?.selectedTileColor,
-      enableFeedback: widget.listTileTheme?.enableFeedback,
-      horizontalTitleGap: widget.listTileTheme?.horizontalTitleGap,
-      minVerticalPadding: widget.listTileTheme?.minVerticalPadding,
-      minLeadingWidth: widget.listTileTheme?.minLeadingWidth,
+    final listTileTheme = ListTileTheme.of(context);
+
+    final tileTheme = ListTileTheme(
+      dense: widget.listTileTheme?.dense ?? listTileTheme.dense,
+      shape: widget.listTileTheme?.shape ?? listTileTheme.shape,
+      style: widget.listTileTheme?.style ?? listTileTheme.style,
+      selectedColor:
+          widget.listTileTheme?.selectedColor ?? listTileTheme.selectedColor,
+      iconColor: widget.listTileTheme?.iconColor ?? listTileTheme.iconColor,
+      textColor: widget.listTileTheme?.textColor ?? listTileTheme.textColor,
+      contentPadding:
+          widget.listTileTheme?.contentPadding ?? listTileTheme.contentPadding,
+      tileColor: widget.listTileTheme?.tileColor ?? listTileTheme.tileColor,
+      selectedTileColor: widget.listTileTheme?.selectedTileColor ??
+          listTileTheme.selectedTileColor,
+      enableFeedback:
+          widget.listTileTheme?.enableFeedback ?? listTileTheme.enableFeedback,
+      horizontalTitleGap: widget.listTileTheme?.horizontalTitleGap ??
+          listTileTheme.horizontalTitleGap,
+      minVerticalPadding: widget.listTileTheme?.minVerticalPadding ??
+          listTileTheme.minVerticalPadding,
+      minLeadingWidth: widget.listTileTheme?.minLeadingWidth ??
+          listTileTheme.minLeadingWidth,
       child: const SizedBox.shrink(),
     );
-
-    final ListTileTheme tileTheme = listTileThemes ?? ListTileTheme.of(context);
+    //final ListTileTheme tileTheme = listTileThemes ?? ListTileTheme.of(context);
 
     final iconThemeData = IconThemeData(
       color: widget.enabled
